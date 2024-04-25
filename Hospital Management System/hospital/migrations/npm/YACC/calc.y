@@ -1,25 +1,57 @@
+%{ 
+/* Definition section */
+#include<stdio.h> 
+int flag=0; 
+%} 
 
-%{
-#include <stdio.h>
-%}
+%token NUMBER 
 
-%token NUM
+%left '+' '-'
 
-%%
+%left '*' '/' '%'
 
-expr: expr '+' expr  { $$ = $1 + $3; }
-    | expr '-' expr  { $$ = $1 - $3; }
-    | NUM            { $$ = $1; }
-    ;
+%left '(' ')'
 
-%%
+/* Rule Section */
+%% 
 
-int main() {
-    yyparse();
-    return 0;
-}
+ArithmeticExpression: E{ 
 
-int yyerror(char *s) {
-    printf("Error: %s\n", s);
-    return 0;
-}
+		printf("\nResult=%d\n", $$); 
+
+		return 0; 
+
+		}; 
+E:E'+'E {$$=$1+$3;} 
+
+|E'-'E {$$=$1-$3;} 
+
+|E'*'E {$$=$1*$3;} 
+
+|E'/'E {$$=$1/$3;} 
+
+|E'%'E {$$=$1%$3;} 
+
+|'('E')' {$$=$2;} 
+
+| NUMBER {$$=$1;} 
+
+; 
+
+%% 
+
+//driver code 
+void main() 
+{ 
+printf("\nEnter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Division, Modulus and Round brackets:\n"); 
+
+yyparse(); 
+if(flag==0) 
+printf("\nEntered arithmetic expression is Valid\n\n"); 
+} 
+
+void yyerror() 
+{ 
+printf("\nEntered arithmetic expression is Invalid\n\n"); 
+flag=1; 
+} 
